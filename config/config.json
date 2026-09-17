@@ -1,0 +1,35 @@
+{
+    "camp_filter": "Pediatric Camp",
+    "camp_column_candidates": [
+        "Camp",
+        "Camp Name",
+        "Camp Type",
+        "Program",
+        "Event",
+        "Camp Category",
+        "Created By",
+        "Modification by",
+        "Modified By"
+    ],
+    "unique_id_column": "UHID",
+    "csv_directory": "csv",
+    "output_directory": "output",
+    "excel_directory": "excel",
+    "images_directory": "images",
+    "dashboard_title": "Pediatric Camp Analytics",
+    "dashboard_subtitle": "Medical Screening & Health Assessment Dashboard",
+    "privacy_mode": true,
+    "missing_value_tokens": ["", "NA", "N/A", "-", "null", "None", "none", "nil", "NIL", "--", "n/a"],
+    "conflict_resolution_strategy": "prefer_non_null_then_latest",
+    "pediatric_bmi_reference": "WHO/CDC-style age- and sex-specific BMI-for-age approximate percentile bands (5th / 85th / 95th) for ages 2-19. See README.md for full documentation, method and limitations.",
+    "pediatric_age_min": 2,
+    "pediatric_age_max": 19,
+    "vital_reference_ranges": {
+        "Temperature_F": {"min": 95.0, "max": 104.0},
+        "SpO2": {"min": 85, "max": 100},
+        "Pulse_Rate": {"min": 40, "max": 180},
+        "Height_cm": {"min": 40, "max": 200},
+        "Weight_kg": {"min": 5, "max": 120},
+        "Age_years": {"min": 0, "max": 19}
+    }
+}

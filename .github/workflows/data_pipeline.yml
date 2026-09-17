@@ -1,0 +1,54 @@
+name: Pediatric Camp Data Pipeline
+
+# Runs the ETL pipeline whenever new/changed CSV files are pushed, and lets
+# you trigger it manually from the Actions tab.
+on:
+  push:
+    paths:
+      - "csv/**"
+  workflow_dispatch: {}
+
+# Avoid overlapping runs stacking up when several CSVs land close together.
+concurrency:
+  group: pediatric-camp-data-pipeline
+  cancel-in-progress: false
+
+# Only grant what's needed to commit the generated files back to the repo.
+permissions:
+  contents: write
+
+jobs:
+  run-etl:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run ETL pipeline
+        run: python scripts/etl.py
+
+      - name: Commit generated files
+        env:
+          # IMPORTANT: do not print secrets or credentials in logs.
+          GIT_AUTHOR_NAME: "pediatric-camp-bot"
+          GIT_AUTHOR_EMAIL: "actions@users.noreply.github.com"
+        run: |
+          git config user.name "$GIT_AUTHOR_NAME"
+          git config user.email "$GIT_AUTHOR_EMAIL"
+          git add output/ excel/
+          if git diff --cached --quiet; then
+            echo "No generated-file changes to commit."
+          else
+            git commit -m "chore: auto-update pipeline outputs [skip ci]"
+            git push
+          fi

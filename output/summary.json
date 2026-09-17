@@ -1,0 +1,85 @@
+{
+  "generated_at": "2026-09-17T09:10:06",
+  "dashboard_title": "Pediatric Camp Analytics",
+  "dashboard_subtitle": "Medical Screening & Health Assessment Dashboard",
+  "kpis": {
+    "Total_Pediatric_Students": 159,
+    "Male_Students": 46,
+    "Female_Students": 113,
+    "Other_Unknown_Gender": 0,
+    "Average_Age": 12.7,
+    "Average_BMI": 17.0,
+    "Normal_BMI_Count": 93,
+    "Underweight_Count": 52,
+    "Overweight_Count": 10,
+    "Obese_Count": 3,
+    "Students_Screened": 159,
+    "Dental_Screening_Count": 93,
+    "Vision_Screening_Count": 67,
+    "Referral_Needed_Count": 0
+  },
+  "charts": {
+    "gender_distribution": {
+      "labels": [
+        "Female",
+        "Male"
+      ],
+      "values": [
+        113,
+        46
+      ]
+    },
+    "age_group_distribution": {
+      "labels": [
+        "11-15",
+        "16-18"
+      ],
+      "values": [
+        142,
+        17
+      ]
+    },
+    "bmi_status_distribution": {
+      "labels": [
+        "Underweight",
+        "Normal",
+        "Overweight",
+        "Obese"
+      ],
+      "values": [
+        52,
+        93,
+        10,
+        3
+      ]
+    },
+    "screening_statistics": {
+      "labels": [
+        "Dental",
+        "Vision",
+        "Height/Weight"
+      ],
+      "values": [
+        93,
+        67,
+        159
+      ]
+    },
+    "camp_date_distribution": {
+      "labels": [
+        "2026-09-11",
+        "2026-09-16",
+        "2026-09-17"
+      ],
+      "values": [
+        110,
+        3,
+        46
+      ]
+    }
+  },
+  "pipeline_meta": {
+    "errors": [],
+    "warnings": []
+  }
+}

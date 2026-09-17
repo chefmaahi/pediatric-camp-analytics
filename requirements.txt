@@ -1,0 +1,7 @@
+# Pediatric Camp Analytics — Python dependencies
+pandas>=2.0
+numpy>=1.24
+openpyxl>=3.1
+
+# Only required for `python scripts/etl.py --watch`
+watchdog>=3.0
