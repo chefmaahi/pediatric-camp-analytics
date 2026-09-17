@@ -339,27 +339,6 @@ function renderCharts(records) {
     })()
   );
   renderChart("chartBmi", "card-bmi", "bar", tally(records, "BMI_Status", ["Underweight", "Normal", "Overweight", "Obese", "Needs Review"]));
-
-  const screeningLabels = [];
-  const screeningValues = [];
-  const dental = records.filter((r) => r.Dental_Caries != null || r.Dental_Remarks != null).length;
-  const vision = records.filter((r) => r.Vision_Right_Eye != null || r.Vision_Left_Eye != null).length;
-  const hw = records.filter((r) => r.Height_cm != null && r.Weight_kg != null).length;
-  if (dental) { screeningLabels.push("Dental"); screeningValues.push(dental); }
-  if (vision) { screeningLabels.push("Vision"); screeningValues.push(vision); }
-  if (hw) { screeningLabels.push("Height/Weight"); screeningValues.push(hw); }
-  renderChart("chartScreening", "card-screening", "bar", { labels: screeningLabels, values: screeningValues });
-
-  const dateCounts = {};
-  records.forEach((r) => {
-    if (!r.Created_DateTime) return;
-    const d = r.Created_DateTime.split(",")[0].trim();
-    dateCounts[d] = (dateCounts[d] || 0) + 1;
-  });
-  const dateLabels = Object.keys(dateCounts).sort();
-  renderChart("chartDate", "card-date", "line", { labels: dateLabels, values: dateLabels.map((d) => dateCounts[d]) }, {
-    elements: { line: { tension: 0.35, borderColor: "#1F6F6B", borderWidth: 2 }, point: { radius: 3, backgroundColor: "#1F6F6B" } },
-  });
 }
 
 /* ---------------- Dental findings ---------------- */
