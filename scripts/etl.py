@@ -120,6 +120,15 @@ def run_pipeline(config_path: str) -> dict:
     logger.info("[INFO] Missing values normalized and validation flags applied")
 
     # 7. Analytics
+    meta.update({
+        "success": True,
+        "csv_files_processed": len(load_result.frames),
+        "records_loaded": total_loaded,
+        "pediatric_camp_records": len(pediatric_df),
+        "unique_uhids": n_unique_before,
+        "duplicate_uhids": n_dupe_uhids,
+        "records_merged_into": len(merged_df),
+    })
     summary = build_summary(merged_df, config, meta)
     dashboard_json = build_dashboard_json(merged_df, config)
 
@@ -144,15 +153,6 @@ def run_pipeline(config_path: str) -> dict:
     logger.info("[INFO] Dashboard JSON generated")
     logger.info("[INFO] ETL completed successfully")
 
-    meta.update({
-        "success": True,
-        "csv_files_processed": len(load_result.frames),
-        "records_loaded": total_loaded,
-        "pediatric_camp_records": len(pediatric_df),
-        "unique_uhids": n_unique_before,
-        "duplicate_uhids": n_dupe_uhids,
-        "records_merged_into": len(merged_df),
-    })
     return meta
 
 

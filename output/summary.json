@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-17T09:10:06",
+  "generated_at": "2026-09-17T09:10:54",
   "dashboard_title": "Pediatric Camp Analytics",
   "dashboard_subtitle": "Medical Screening & Health Assessment Dashboard",
   "kpis": {
@@ -80,6 +80,13 @@
   },
   "pipeline_meta": {
     "errors": [],
-    "warnings": []
+    "warnings": [],
+    "success": true,
+    "csv_files_processed": 5,
+    "records_loaded": 1110,
+    "pediatric_camp_records": 595,
+    "unique_uhids": 159,
+    "duplicate_uhids": 159,
+    "records_merged_into": 159
   }
 }
