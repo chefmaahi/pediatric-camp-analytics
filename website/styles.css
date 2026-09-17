@@ -26,7 +26,21 @@
 
   --radius-sm: 6px;
   --radius-md: 10px;
-  --shadow-card: 0 1px 2px rgba(13, 43, 40, 0.06), 0 6px 18px rgba(13, 43, 40, 0.05);
+
+  /* Layered shadow system — soft ambient + tighter contact shadow,
+     used across KPI cards, chart cards and the carousel. */
+  --shadow-card: 0 1px 2px rgba(13, 43, 40, 0.07),
+                 0 4px 10px rgba(13, 43, 40, 0.06),
+                 0 16px 32px -12px rgba(13, 43, 40, 0.16);
+  --shadow-card-hover: 0 2px 4px rgba(13, 43, 40, 0.08),
+                       0 8px 16px rgba(13, 43, 40, 0.09),
+                       0 24px 44px -14px rgba(13, 43, 40, 0.24);
+  --shadow-kpi: 0 1px 2px rgba(13, 43, 40, 0.08),
+                0 6px 14px rgba(13, 43, 40, 0.08),
+                0 18px 30px -14px rgba(13, 43, 40, 0.22);
+  --shadow-kpi-hover: 0 2px 4px rgba(13, 43, 40, 0.1),
+                      0 10px 20px rgba(13, 43, 40, 0.12),
+                      0 26px 40px -12px rgba(13, 43, 40, 0.28);
 }
 
 * { box-sizing: border-box; }
@@ -111,7 +125,7 @@ main {
   overflow: hidden;
   aspect-ratio: 21 / 8;
   background: var(--teal-950);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-card-hover);
 }
 
 @media (max-width: 640px) {
@@ -193,6 +207,7 @@ main {
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   padding: 16px 18px;
+  box-shadow: var(--shadow-card);
 }
 
 .filter-group { display: flex; flex-direction: column; gap: 5px; min-width: 140px; }
@@ -231,21 +246,56 @@ main {
 }
 .reset-btn:hover { background: var(--teal-200); }
 
+/* ---------------- Section headings ---------------- */
+
+.section-block { margin-top: 34px; }
+
+.section-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 14px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.3rem;
+  color: var(--teal-950);
+}
+
+.section-heading p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
 /* ---------------- KPI cards ---------------- */
 
 .kpi-grid {
-  margin-top: 26px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .kpi-card {
+  flex: 1 1 170px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   background: var(--paper-raised);
   border: 1px solid var(--line);
   border-top: 3px solid var(--teal-700);
   border-radius: var(--radius-sm);
-  padding: 16px 16px 14px;
+  padding: 18px 18px 16px;
+  box-shadow: var(--shadow-kpi);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kpi-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-kpi-hover);
 }
 
 .kpi-card.accent-amber { border-top-color: var(--amber); }
@@ -267,31 +317,98 @@ main {
   color: var(--ink-soft);
 }
 
+/* ---- Finding cards (dental / additional clinical findings) ---- */
+
+.findings-grid .kpi-card {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  border-left: 4px solid var(--slate-blue);
+}
+
+.findings-grid .kpi-card.accent-brick { border-left-color: var(--brick); border-top-color: var(--line); }
+.findings-grid .kpi-card.accent-amber { border-left-color: var(--amber); border-top-color: var(--line); }
+.findings-grid .kpi-card.accent-sage { border-left-color: var(--sage); border-top-color: var(--line); }
+.findings-grid .kpi-card.accent-slate { border-left-color: var(--slate-blue); border-top-color: var(--line); }
+
+.finding-icon {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  background: var(--teal-100);
+  color: var(--teal-700);
+}
+
+.findings-grid .kpi-card.accent-brick .finding-icon { background: #f6e4e2; color: var(--brick); }
+.findings-grid .kpi-card.accent-amber .finding-icon { background: #f8ead4; color: var(--amber-dark); }
+.findings-grid .kpi-card.accent-sage .finding-icon { background: #dff1e6; color: var(--sage); }
+
+.finding-body { display: flex; flex-direction: column; }
+.finding-body .kpi-value { font-size: 1.6rem; }
+.finding-body .kpi-label { margin-top: 2px; }
+
 /* ---------------- Charts ---------------- */
 
 .charts-grid {
-  margin-top: 30px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 16px;
+  gap: 18px;
 }
 
 .chart-card {
+  display: flex;
+  flex-direction: column;
   background: var(--paper-raised);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   padding: 18px 18px 8px;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chart-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .chart-card.wide { grid-column: 1 / -1; }
 
+.chart-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
 .chart-card h3 {
-  margin: 0 0 12px;
+  margin: 0;
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 1.05rem;
   color: var(--teal-950);
 }
+
+.chart-badge {
+  flex: 0 0 auto;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--teal-700);
+  background: var(--teal-100);
+  border: 1px solid var(--teal-200);
+  border-radius: 999px;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+
+.chart-badge:empty { display: none; }
 
 .chart-wrap { position: relative; height: 260px; }
 .chart-card.wide .chart-wrap { height: 240px; }
@@ -331,6 +448,8 @@ main {
   .header-inner { flex-direction: column; align-items: flex-start; }
   .header-meta { align-items: flex-start; }
   .reset-btn { margin-left: 0; width: 100%; text-align: center; }
+  .kpi-card { flex-basis: 100%; }
+  .findings-grid .kpi-card { flex-basis: 100%; }
 }
 
 /* Reduced motion */

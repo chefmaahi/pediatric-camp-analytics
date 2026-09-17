@@ -67,30 +67,82 @@
   </section>
 
   <!-- KPI cards -->
-  <section class="kpi-grid" id="kpiGrid" aria-label="Key statistics"></section>
+  <section class="section-block">
+    <div class="section-heading">
+      <h2>Key Statistics</h2>
+    </div>
+    <section class="kpi-grid" id="kpiGrid" aria-label="Key statistics"></section>
+  </section>
 
   <!-- Charts -->
-  <section class="charts-grid" id="chartsGrid" aria-label="Charts">
-    <div class="chart-card" id="card-gender">
-      <h3>Gender Distribution</h3>
-      <div class="chart-wrap"><canvas id="chartGender"></canvas></div>
+  <section class="section-block">
+    <div class="section-heading">
+      <h2>Screening Overview</h2>
     </div>
-    <div class="chart-card" id="card-age">
-      <h3>Age Group Distribution</h3>
-      <div class="chart-wrap"><canvas id="chartAge"></canvas></div>
+    <section class="charts-grid" id="chartsGrid" aria-label="Charts">
+      <div class="chart-card" id="card-gender">
+        <div class="chart-card-head">
+          <h3>Gender Distribution</h3>
+          <span class="chart-badge" id="badge-gender"></span>
+        </div>
+        <div class="chart-wrap"><canvas id="chartGender"></canvas></div>
+      </div>
+      <div class="chart-card" id="card-age">
+        <div class="chart-card-head">
+          <h3>Age Group Distribution</h3>
+          <span class="chart-badge" id="badge-age"></span>
+        </div>
+        <div class="chart-wrap"><canvas id="chartAge"></canvas></div>
+      </div>
+      <div class="chart-card" id="card-bmi">
+        <div class="chart-card-head">
+          <h3>BMI Status (Pediatric Reference)</h3>
+          <span class="chart-badge" id="badge-bmi"></span>
+        </div>
+        <div class="chart-wrap"><canvas id="chartBmi"></canvas></div>
+      </div>
+      <div class="chart-card" id="card-screening">
+        <div class="chart-card-head">
+          <h3>Screening Coverage</h3>
+          <span class="chart-badge" id="badge-screening"></span>
+        </div>
+        <div class="chart-wrap"><canvas id="chartScreening"></canvas></div>
+      </div>
+      <div class="chart-card wide" id="card-date">
+        <div class="chart-card-head">
+          <h3>Students Screened by Camp Date</h3>
+          <span class="chart-badge" id="badge-date"></span>
+        </div>
+        <div class="chart-wrap"><canvas id="chartDate"></canvas></div>
+      </div>
+    </section>
+  </section>
+
+  <!-- Dental findings -->
+  <section class="section-block">
+    <div class="section-heading">
+      <h2>Dental Health Findings</h2>
+      <p>Detected on clinical dental examination, from screening records</p>
     </div>
-    <div class="chart-card" id="card-bmi">
-      <h3>BMI Status (Pediatric Reference)</h3>
-      <div class="chart-wrap"><canvas id="chartBmi"></canvas></div>
+    <section class="kpi-grid findings-grid" id="dentalKpiGrid" aria-label="Dental findings"></section>
+    <div class="charts-grid" style="margin-top: 16px;">
+      <div class="chart-card wide" id="card-dental">
+        <div class="chart-card-head">
+          <h3>Dental Findings Breakdown</h3>
+          <span class="chart-badge" id="badge-dental"></span>
+        </div>
+        <div class="chart-wrap"><canvas id="chartDental"></canvas></div>
+      </div>
     </div>
-    <div class="chart-card" id="card-screening">
-      <h3>Screening Coverage</h3>
-      <div class="chart-wrap"><canvas id="chartScreening"></canvas></div>
+  </section>
+
+  <!-- Additional clinical findings -->
+  <section class="section-block">
+    <div class="section-heading">
+      <h2>Additional Clinical Findings</h2>
+      <p>Nutritional, vision &amp; general health observations from screening records</p>
     </div>
-    <div class="chart-card wide" id="card-date">
-      <h3>Students Screened by Camp Date</h3>
-      <div class="chart-wrap"><canvas id="chartDate"></canvas></div>
-    </div>
+    <section class="kpi-grid findings-grid" id="generalKpiGrid" aria-label="Additional clinical findings"></section>
   </section>
 
   <section class="privacy-note">
@@ -104,6 +156,7 @@
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

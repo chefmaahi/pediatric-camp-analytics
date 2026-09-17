@@ -11,6 +11,11 @@ const IMAGE_CANDIDATES = ["camp-1.jpg", "camp-2.jpg", "camp-3.jpg", "camp-4.jpg"
 
 const CHART_COLORS = ["#1F6F6B", "#D9822B", "#BD4A3F", "#3F6E8C", "#2F8A5C", "#8B6BB0"];
 
+if (window.Chart && window.ChartDataLabels) {
+  Chart.register(ChartDataLabels);
+  Chart.defaults.set("plugins.datalabels", { display: false }); // opt-in per chart below
+}
+
 let ALL_RECORDS = [];
 let charts = {};
 
@@ -203,12 +208,6 @@ function computeKpis(records) {
     if (other > 0) kpis.push({ label: "Other / Unknown Gender", value: other, accent: "" });
   }
 
-  const ages = records.map((r) => r.Age_Years).filter((v) => v != null);
-  if (ages.length) kpis.push({ label: "Average Age", value: avg(ages).toFixed(1), accent: "" });
-
-  const bmis = records.map((r) => r.BMI).filter((v) => v != null);
-  if (bmis.length) kpis.push({ label: "Average BMI", value: avg(bmis).toFixed(1), accent: "" });
-
   const bmiStatuses = records.map((r) => r.BMI_Status).filter(Boolean);
   if (bmiStatuses.length) {
     kpis.push({ label: "Normal BMI", value: count(bmiStatuses, "Normal"), accent: "sage" });
@@ -263,11 +262,17 @@ function tally(records, field, order) {
 
 function renderChart(id, cardId, type, chartData, options = {}) {
   const card = document.getElementById(cardId);
+  const badge = document.getElementById("badge-" + cardId.replace("card-", ""));
   if (!chartData.labels.length) {
     card.classList.add("empty");
+    if (badge) badge.textContent = "";
     return;
   }
   card.classList.remove("empty");
+  const total = chartData.values.reduce((a, b) => a + b, 0);
+  if (badge) badge.textContent = total.toLocaleString() + (type === "line" ? " screenings" : " total");
+
+  const isCircular = type === "doughnut" || type === "pie";
   const ctx = document.getElementById(id).getContext("2d");
   if (charts[id]) charts[id].destroy();
   charts[id] = new Chart(ctx, {
@@ -279,7 +284,7 @@ function renderChart(id, cardId, type, chartData, options = {}) {
           data: chartData.values,
           backgroundColor: chartData.labels.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]),
           borderRadius: type === "bar" ? 4 : 0,
-          borderWidth: type === "doughnut" ? 2 : 0,
+          borderWidth: isCircular ? 2 : 0,
           borderColor: "#ffffff",
         },
       ],
@@ -287,9 +292,20 @@ function renderChart(id, cardId, type, chartData, options = {}) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      layout: { padding: { top: isCircular ? 0 : 22 } },
       plugins: {
-        legend: { display: type === "doughnut", position: "bottom", labels: { boxWidth: 12, font: { family: "Public Sans" } } },
+        legend: { display: isCircular, position: "bottom", labels: { boxWidth: 12, font: { family: "Public Sans" } } },
         tooltip: { titleFont: { family: "Public Sans" }, bodyFont: { family: "Public Sans" } },
+        datalabels: {
+          display: type !== "line",
+          color: isCircular ? "#ffffff" : "#182420",
+          anchor: isCircular ? "center" : "end",
+          align: isCircular ? "center" : "end",
+          offset: isCircular ? 0 : 2,
+          font: { family: "Public Sans", weight: "600", size: 11 },
+          formatter: (value) =>
+            isCircular ? value + " (" + Math.round((value / total) * 100) + "%)" : value,
+        },
       },
       scales:
         type === "bar"
@@ -297,6 +313,8 @@ function renderChart(id, cardId, type, chartData, options = {}) {
               y: { beginAtZero: true, ticks: { precision: 0 } },
               x: { grid: { display: false } },
             }
+          : type === "line"
+          ? { y: { beginAtZero: true, ticks: { precision: 0 } }, x: { grid: { display: false } } }
           : undefined,
       ...options,
     },
@@ -344,7 +362,126 @@ function renderCharts(records) {
   });
 }
 
+/* ---------------- Dental findings ---------------- */
+
+// A field counts as a dental "finding" when it holds anything other than
+// a plain "No" / null — i.e. a tooth code, severity grade, or "Yes".
+function hasFinding(value) {
+  if (value === null || value === undefined) return false;
+  const v = String(value).trim().toLowerCase();
+  return v !== "" && v !== "no" && v !== "normal";
+}
+
+function computeDentalFindings(records) {
+  const els = { kpiGrid: document.getElementById("dentalKpiGrid") };
+  const caries = records.filter(
+    (r) => hasFinding(r.Dental_Caries) || hasFinding(r.Deep_Dental_Caries) || hasFinding(r.Pit_Fissure_Caries)
+  ).length;
+  const decayed = records.filter((r) => hasFinding(r.Grossly_Decayed)).length;
+  const calculus = records.filter((r) => hasFinding(r.Calculus)).length;
+  const stains = records.filter((r) => hasFinding(r.Stains)).length;
+  const flourosis = records.filter((r) => hasFinding(r.Flourosis)).length;
+  const overRetained = records.filter((r) => hasFinding(r.Over_Retained_Tooth)).length;
+  const treatmentAdvised = records.filter(
+    (r) =>
+      hasFinding(r.Advised_Extraction) ||
+      hasFinding(r.Advised_Pulpectomy) ||
+      hasFinding(r.Advised_Restorations) ||
+      hasFinding(r.Advised_Scaling)
+  ).length;
+  const examined = records.filter((r) => r.Bald_Tongue != null || r.Calculus != null).length;
+
+  return {
+    examined,
+    findings: [
+      { icon: "🦷", label: "Dental Caries Detected", value: caries, accent: "brick" },
+      { icon: "⚠️", label: "Grossly Decayed Teeth", value: decayed, accent: "brick" },
+      { icon: "🧫", label: "Calculus / Tartar Present", value: calculus, accent: "amber" },
+      { icon: "🩹", label: "Tooth Stains Noted", value: stains, accent: "amber" },
+      { icon: "🔬", label: "Fluorosis Cases", value: flourosis, accent: "amber" },
+      { icon: "🦷", label: "Over-Retained (Milk) Teeth", value: overRetained, accent: "slate" },
+      { icon: "🩺", label: "Dental Treatment Advised", value: treatmentAdvised, accent: "sage" },
+    ],
+  };
+}
+
+function renderFindingCards(container, findings) {
+  container.innerHTML = findings
+    .map(
+      (f) => `
+      <div class="kpi-card ${f.accent ? "accent-" + f.accent : ""}">
+        <span class="finding-icon" aria-hidden="true">${f.icon}</span>
+        <div class="finding-body">
+          <div class="kpi-value">${f.value}</div>
+          <div class="kpi-label">${f.label}</div>
+        </div>
+      </div>`
+    )
+    .join("");
+}
+
+function renderDentalFindings(records) {
+  const grid = document.getElementById("dentalKpiGrid");
+  const badge = document.getElementById("badge-dental");
+  const { examined, findings } = computeDentalFindings(records);
+  renderFindingCards(grid, findings);
+  if (badge) badge.textContent = examined ? examined.toLocaleString() + " examined" : "";
+
+  const chartData = {
+    labels: findings.map((f) => f.label),
+    values: findings.map((f) => f.value),
+  };
+  renderChart("chartDental", "card-dental", "bar", chartData, {
+    indexAxis: "y",
+    scales: {
+      x: { beginAtZero: true, ticks: { precision: 0 } },
+      y: { grid: { display: false } },
+    },
+  });
+}
+
+/* ---------------- Additional clinical findings ---------------- */
+
+function computeGeneralFindings(records) {
+  const anemia = records.filter((r) => r.Nutritional_General_Health === "Pale Skin (Anemia)").length;
+  const skinRash = records.filter((r) => r.Nutritional_General_Health === "Skin Rash/Itching").length;
+  const acuteIllness = records.filter((r) => hasFinding(r.Acute_Illness)).length;
+  const notReceivingTreatment = records.filter((r) => r.Receiving_Regular_Treatment === "No").length;
+  const visionNormal = records.filter(
+    (r) => r.Vision_Right_Eye != null && String(r.Vision_Right_Eye).toLowerCase() === "normal"
+  ).length;
+  const visionScreened = records.filter((r) => r.Vision_Right_Eye != null).length;
+
+  const findings = [];
+  if (anemia) findings.push({ icon: "🩸", label: "Pale Skin (Possible Anemia)", value: anemia, accent: "brick" });
+  if (skinRash) findings.push({ icon: "🧴", label: "Skin Rash / Itching Noted", value: skinRash, accent: "amber" });
+  if (acuteIllness) findings.push({ icon: "🤒", label: "Acute Illness Reported", value: acuteIllness, accent: "amber" });
+  if (visionScreened)
+    findings.push({
+      icon: "👁️",
+      label: "Normal Vision on Screening",
+      value: `${visionNormal} / ${visionScreened}`,
+      accent: "sage",
+    });
+  if (notReceivingTreatment)
+    findings.push({ icon: "💊", label: "Not Currently on Regular Treatment", value: notReceivingTreatment, accent: "slate" });
+
+  return findings;
+}
+
+function renderGeneralFindings(records) {
+  const grid = document.getElementById("generalKpiGrid");
+  const findings = computeGeneralFindings(records);
+  if (!findings.length) {
+    grid.innerHTML = `<div class="kpi-card"><div class="kpi-label">No additional clinical findings recorded in the current selection.</div></div>`;
+    return;
+  }
+  renderFindingCards(grid, findings);
+}
+
 function render(records) {
   renderKpis(records);
   renderCharts(records);
+  renderDentalFindings(records);
+  renderGeneralFindings(records);
 }
