@@ -10,13 +10,11 @@
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-
+ 
 <header class="site-header">
   <div class="header-inner">
     <div class="brand">
-      <span class="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 40 40" width="34" height="34"><path d="M20 4c-3.5 3.6-9 5-14 5v10c0 10 6 17 14 17s14-7 14-17V9c-5 0-10.5-1.4-14-5z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M20 14v12M14 20h12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
-      </span>
+      <img src="images/logo.png" alt="Swaasthya Hospitals logo" class="brand-logo">
       <div class="brand-text">
         <h1>Pediatric Camp Analytics</h1>
         <p>Medical Screening &amp; Health Assessment Dashboard</p>
@@ -28,9 +26,9 @@
     </div>
   </div>
 </header>
-
+ 
 <main>
-
+ 
   <!-- Carousel -->
   <section class="carousel-section" aria-label="Camp photographs">
     <div class="carousel" id="carousel">
@@ -40,7 +38,7 @@
       <div class="carousel-dots" id="carouselDots"></div>
     </div>
   </section>
-
+ 
   <!-- Filters -->
   <section class="filters-bar" aria-label="Dashboard filters">
     <div class="filter-group">
@@ -65,7 +63,7 @@
     </div>
     <button class="reset-btn" id="resetFilters">Reset</button>
   </section>
-
+ 
   <!-- KPI cards -->
   <section class="section-block">
     <div class="section-heading">
@@ -73,7 +71,7 @@
     </div>
     <section class="kpi-grid" id="kpiGrid" aria-label="Key statistics"></section>
   </section>
-
+ 
   <!-- Charts -->
   <section class="section-block">
     <div class="section-heading">
@@ -101,16 +99,9 @@
         </div>
         <div class="chart-wrap"><canvas id="chartBmi"></canvas></div>
       </div>
-      <div class="chart-card wide" id="card-date">
-        <div class="chart-card-head">
-          <h3>Students Screened by Camp Date</h3>
-          <span class="chart-badge" id="badge-date"></span>
-        </div>
-        <div class="chart-wrap"><canvas id="chartDate"></canvas></div>
-      </div>
     </section>
   </section>
-
+ 
   <!-- Dental findings -->
   <section class="section-block">
     <div class="section-heading">
@@ -128,7 +119,7 @@
       </div>
     </div>
   </section>
-
+ 
   <!-- Additional clinical findings -->
   <section class="section-block">
     <div class="section-heading">
@@ -137,13 +128,13 @@
     </div>
     <section class="kpi-grid findings-grid" id="generalKpiGrid" aria-label="Additional clinical findings"></section>
   </section>
-
+ 
   <section class="privacy-note">
     <p>Only de-identified, aggregated statistics are shown on this dashboard. No individual names, UHIDs, or contact details are displayed. See README.md for full data-privacy documentation.</p>
   </section>
-
+ 
 </main>
-
+ 
 <footer class="site-footer">
   <p>Pediatric Camp Analytics &middot; Generated automatically by the ETL pipeline &middot; <span id="footerRecordCount"></span> screening records</p>
 </footer>
