@@ -78,9 +78,13 @@ img { max-width: 100%; display: block; }
 
 .brand { display: flex; align-items: center; gap: 14px; }
 
-.brand-mark {
-  color: var(--amber);
+.brand-logo {
   flex-shrink: 0;
+  height: 44px;
+  width: auto;
+  background: #fff;
+  border-radius: 8px;
+  padding: 4px 8px;
 }
 
 .brand-text h1 {
