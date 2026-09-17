@@ -13,13 +13,18 @@ concurrency:
   group: pediatric-camp-data-pipeline
   cancel-in-progress: false
 
-# Only grant what's needed to commit the generated files back to the repo.
+# Needed to: commit generated files back to the repo, and publish to Pages.
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   run-etl:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -52,3 +57,36 @@ jobs:
             git commit -m "chore: auto-update pipeline outputs [skip ci]"
             git push
           fi
+
+      # ---- Publish the dashboard to GitHub Pages ----------------------------
+      # Bundles website/ together with the freshly-generated output/ and
+      # images/ (script.js reads them via "../output/..." and "../images/...",
+      # so the folder layout below must stay in sync with website/script.js).
+      - name: Assemble Pages site
+        run: |
+          mkdir -p _site/website
+          cp -r website/. _site/website/
+          cp -r output _site/output
+          cp -r images _site/images
+          cat > _site/index.html <<'EOF'
+          <!doctype html>
+          <html lang="en">
+            <head>
+              <meta charset="utf-8">
+              <meta http-equiv="refresh" content="0; url=./website/">
+              <title>Redirecting…</title>
+            </head>
+            <body>
+              <p>Redirecting to the <a href="./website/">Pediatric Camp dashboard</a>…</p>
+            </body>
+          </html>
+          EOF
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
